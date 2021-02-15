@@ -99,10 +99,11 @@ servers.
 
 For the software we are essentially writing our own libraries.
 
-III.1. Data Gatherers & Data Harvesters
-=======================================
-1. Gatherers
-------------
+1. Data Gatherers & Data Harvesters
+-----------------------------------
+
+### 1. Gatherers
+
 After writing my first threaded, source-heterogenous web scraper I believe this
 will not be hard so much as tedious.
 
@@ -143,8 +144,8 @@ access. Two algorithms for rate limits are comonly used:
 Most of these requirements (an exponential backoff system, a rate limit or token
 limit system) can be defined as Mixins through multiple inheritance.
 
-2. Harvesters
--------------
+### 2. Harvesters
+
 So far I have been desribing Gatherers: bots which gather predefined data
 distributed from a given source. The other method of data collection is through
 Harvesters: bots designed to generate data themselves over a period of time.
@@ -155,3 +156,57 @@ will be generated, or "harvested," not gathered.
 
 Because this is more complex, and not easily specifiable ahead of time, this
 section will remain brief, to serve mostly as a stub for future development.
+
+III.2 Data Storage
+==================
+First, I will be using an ORM for convenience's sake, specifically SQLAlchemy
+since it is widely adaptable and I am most familiar with it. If it becomes
+unwieldy, I will abandon it and write my own ORM, which should not be difficult.
+
+Second, I will use a full relational database system, most likely Postgresql.
+Perhaps we would be better off with a NoSQL solution like Mongo or similar, but
+given my unfamiliarity with such products, I will refrain for now. I plan to
+design the system abstracted enough that I don't have to worry about switching
+platforms easily.
+
+Third, the simplest way to store any time series is as a JSON object in a TEXT
+field. So the actual data generated will be stored as just a single field that
+can be interpreted by `json.loads()`. It can thence be easily translated into a
+pandas dataframe.
+
+The object itself (table) should have numerous fields that can be extensible.
+
+1. The source of the data (url? Harvesters would be more complex).
+2. Type (Stock, temperature/city, etc. etc.)
+3. Time frame: the interval of the actual data (DateTime to DateTime). This
+   might be two fields Start and End, inclusive:exclusive for consistency's
+   sake.
+4. The actual data, stored as a JSON TEXT field.
+
+The second object (table) is a comparison object that points the two objects it
+compares. This will consist of the following fields:
+
+1. Series1 points to the first object
+2. Series2 points to the second object
+3. A covariance field (or set of fields) which show the covariance of the two
+   time series objects. This will perhaps be a JSON TEXT field itself, showing
+   the expanding covariance window starting from the last date extending
+   backwards.
+
+III.3 Data Analysis
+===================
+This is the simplest process of the three, but will be far more computationally
+expensive because of combinatorial explosion. We will have to write in ways of
+tracking progress to find metrics to improve performance.
+
+This idea will be to write a single class that can be multithreaded to compare
+every stock time series to every other time series to find a covariance level
+given a set of offsets.
+
+The process will be, in its most simple form,
+
+1. Normalize the time series
+2. Starting with the shortest, most recent interval and expanding backward,
+   create a covariance matrix.
+3. Store the interval/covariance matrix series as a new object pointing to the
+   two parent time series.
