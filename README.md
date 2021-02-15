@@ -100,7 +100,7 @@ servers.
 For the software we are essentially writing our own libraries.
 
 III.1 Data Gatherers & Data Harvesters
------------------------------------
+======================================
 
 ### 1. Gatherers
 
