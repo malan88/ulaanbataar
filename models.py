@@ -28,6 +28,7 @@ class Series(Base):
 class Correlation(Base):
     series_a = Column(Integer, ForeignKey(Series.id))
     series_b = Column(Integer, ForeignKey(Series.id))
+    score = Column(Float)
 
 
 def get_session():
