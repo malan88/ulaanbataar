@@ -1,4 +1,6 @@
 import os
+import json
+from datetime import datetime as dt
 from datetime import datetime as dt
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy import Column, ForeignKey, Table
@@ -26,6 +28,12 @@ class Series(Base):
     series = Column(Text)       # a json object of timeseries data
     first = Column(Date)        # the first date in the series
     last = Column(Date)         # the last date in the series
+
+    @property
+    def data(self):
+        j = json.loads(self.series)
+        d = {dt.fromtimestamp(float(k)/1000):v for k, v in j.items()}
+        return d
 
     @property
     def correlations(self):
