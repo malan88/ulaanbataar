@@ -7,13 +7,14 @@ params = {
     'action': 'parse',
     'prop': 'text',
     'format': 'json',
-    'page': 'List_of_S%26P_500_companies',
+    'page': 'List_of_S&P_500_companies',
     'section': 1
 }
 
 def gettable():
     resp = requests.get(url, params=params)
-    soup = BeautifulSoup(resp.json()['parse']['text']['*'])
+    print(resp.url)
+    soup = BeautifulSoup(resp.json()['parse']['text']['*'], 'lxml')
     return soup
 
 def gettickers():
