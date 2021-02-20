@@ -12,7 +12,7 @@ def process_history(s, ticker, history):
     for feature in features:
         json = history[feature].to_json()
         series = Series()
-        series.kind = f"stock:{feature}:{ticker}"
+        series.kind = f"stock:{feature}:{ticker.ticker}"
         series.first = first
         series.last = last
         series.series = json
@@ -26,6 +26,7 @@ def main():
         ticker = yf.Ticker(ticker)
         hist = ticker.history(period="1y")
         process_history(s, ticker, hist)
+        print("Processed", ticker.ticker)
         s.commit()
         sleep(random()*10+10)
 
