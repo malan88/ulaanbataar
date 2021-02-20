@@ -30,13 +30,14 @@ def main():
         pos = tickers.index(ticker)
         tickers.pop(pos)
     for ticker in tickers:
+        ticker = ticker.replace('.', '-')
         try:
             ticker = yf.Ticker(ticker)
             hist = ticker.history(period="1y")
+            process_history(s, ticker, hist)
         except:
             sleep(random()*10+20)
             continue
-        process_history(s, ticker, hist)
         print("Processed", ticker.ticker)
         s.commit()
         sleep(random()*10+20)
