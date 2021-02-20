@@ -1,13 +1,15 @@
+import os
 from datetime import datetime as dt
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, MetaData
 from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy import Integer, String, Float, Text, DateTime, Boolean, Date
 from sqlalchemy.orm import relationship, backref, sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declared_attr, declarative_base
 
+DB = os.environ.get('ULAANBATAAR_DB')
 
-engine = create_engine('sqlite:///ulaanbataar.db')
-
+engine = create_engine(DB)
+metadata = MetaData()
 
 class Base_:
     @declared_attr
@@ -16,7 +18,7 @@ class Base_:
 
     id = Column(Integer, primary_key=True)
 
-Base = declarative_base(cls=Base_)
+Base = declarative_base(cls=Base_, metadata=metadata)
 
 
 class Series(Base):
