@@ -22,14 +22,24 @@ def process_history(s, ticker, history):
 def main():
     tickers = gettickers()
     s = get_session()
+    series = s.query(Series).all()
+    goods = set()
+    for serie in series:
+        goods.add(serie.kind.split(':')[-1])
+    for ticker in goods:
+        pos = tickers.index(ticker)
+        tickers.pop(pos)
     for ticker in tickers:
-        ticker = yf.Ticker(ticker)
-        hist = ticker.history(period="1y")
+        try:
+            ticker = yf.Ticker(ticker)
+            hist = ticker.history(period="1y")
+        except:
+            sleep(random()*10+20)
+            continue
         process_history(s, ticker, hist)
         print("Processed", ticker.ticker)
         s.commit()
-        sleep(random()*10+10)
-
+        sleep(random()*10+20)
 
 if __name__ == "__main__":
     main()
