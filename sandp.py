@@ -22,7 +22,7 @@ def gettickers():
     table = soup.find('tbody')
     tickers = []
     for row in table.find_all('tr'):
-        ticker = row.find('a').text.strip()
+        ticker = row.find('a').text.strip().replace('.', '-')
         tickers.append(ticker)
     tickers.pop(0)
     return tickers
