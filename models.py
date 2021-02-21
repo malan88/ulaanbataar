@@ -1,5 +1,6 @@
 import os
 import json
+import pandas as pd
 from datetime import datetime as dt
 from datetime import datetime as dt
 from sqlalchemy import create_engine, MetaData
@@ -30,10 +31,28 @@ class Series(Base):
     last = Column(Date)         # the last date in the series
 
     @property
-    def data(self):
+    def series_dict(self):
         j = json.loads(self.series)
         d = {dt.fromtimestamp(float(k)/1000):v for k, v in j.items()}
         return d
+
+    @property
+    def series_dataframe(self):
+        df = pd.read_json(self.series, orient='index')
+        df.columns = [self.type]
+        return df
+
+    @property
+    def family(self):
+        return self.kind.split(':')[0]
+
+    @property
+    def type(self):
+        return self.kind.split(':')[1]
+
+    @property
+    def specimen(self):
+        return self.kind.split(':')[-1]
 
     @property
     def correlations(self):
