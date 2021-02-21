@@ -14,6 +14,7 @@ DB = os.environ.get('ULAANBATAAR_DB')
 engine = create_engine(DB)
 metadata = MetaData()
 
+
 class Base_:
     @declared_attr
     def __tablename__(cls):
@@ -63,6 +64,7 @@ class Series(Base):
 
     def __repr__(self):
         return f"<Series {self.kind} {self.first} {self.last}>"
+
 
 class Correlation(Base):
     series_a = Column(Integer, ForeignKey(Series.id))
